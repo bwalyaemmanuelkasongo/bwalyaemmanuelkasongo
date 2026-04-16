@@ -1,0 +1,52 @@
+
+FUNCTION precedence(ch)
+IF ch == '+' OR ch == '-' → RETURN 1
+IF ch == '*' OR ch == '/' → RETURN 2
+IF ch == '^' → RETURN 3
+RETURN -1
+END FUNCTION
+FUNCTION infixToPostfix(exp)
+result ← ""
+stack ← empty stack
+
+FOR each character c IN exp:
+
+IF c is letter or digit:
+APPEND c → result
+
+ELSE IF c == '(':
+PUSH c → stack
+
+ELSE IF c == ')':
+WHILE stack not empty AND top ≠ '(':
+POP stack → APPEND to result
+POP '(' from stack // discard it
+
+ELSE // c is an operator
+WHILE stack not empty AND precedence(top) ≥ precedence(c):
+POP stack → APPEND to result
+PUSH c → stack
+
+END FOR
+
+WHILE stack not empty: // flush remaining operators
+POP stack → APPEND to result
+
+RETURN result
+END FUNCTION
+FUNCTION infixToPrefix(exp)
+reversed ← reverse(exp)
+
+// Swap every '(' with ')' and vice-versa
+FOR each character c IN reversed:
+IF c == '(' → replace with ')'
+IF c == ')' → replace with '('
+END FOR
+
+postfix ← infixToPostfix(reversed)
+RETURN reverse(postfix)
+END FUNCTION
+// Main
+infix ← "(A-B/C)*(A/K-L)"
+PRINT "Postfix: " + infixToPostfix(infix)
+PRINT "Prefix: " + infixToPrefix(infix)
